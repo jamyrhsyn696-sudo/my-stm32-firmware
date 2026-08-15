@@ -1,4 +1,4 @@
-name: Build STM32 Firmware
+name: Build PlatformIO Firmware
 
 on:
   push:
@@ -12,18 +12,17 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install ARM GCC
+    - name: Install PlatformIO Core
       run: |
-        sudo apt update
-        sudo apt install gcc-arm-none-eabi -y
+        python3 -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
+        echo "$HOME/.platformio/penv/bin" >> $GITHUB_PATH
 
     - name: Build firmware
       run: |
-        cd Project/Test_USI
-        make
+        platformio run
 
     - name: Upload firmware
       uses: actions/upload-artifact@v4
       with:
         name: firmware
-        path: Project/Test_USI/*.hex
+        path: .pio/build/bluepill_f103c8/*.hex
